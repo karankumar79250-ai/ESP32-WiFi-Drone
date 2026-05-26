@@ -45,7 +45,7 @@ ESP32-WiFi-Drone/
 | IMU Sensor | MPU6050 (I2C, 3.3V) |
 | Motors | 4x BLDC Brushless Motor (1000KV – 2300KV) |
 | ESC | 4x ESC (20A or 30A, PWM input) |
-| Frame | 210mm or 250mm quadcopter frame |
+| Frame | 210mm or 250mm or 450mm quadcopter frame |
 | Battery | 3S or 4S LiPo (1300mAh – 2200mAh) |
 | Power Distribution | PDB or 4-in-1 ESC board |
 | Propellers | Matched to your motor KV rating |
