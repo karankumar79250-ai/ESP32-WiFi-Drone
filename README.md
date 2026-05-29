@@ -186,15 +186,13 @@ The MPU6050 accelerometer has a small factory offset — it won't read exactly 0
 
 **How to find your calibration values:**
 
-Use the accelerometer calibration tool (will be added to `tools/` folder soon).
+Use the accelerometer calibration tool 
 
-Until then, a quick manual method:
-
-1. Upload the main drone code and open Serial Monitor at `115200 baud`
+1. Upload the accelerometer calibartion code and open Serial Monitor at `115200 baud`
 2. Place MPU6050 flat on a level surface
-3. Look for AccX, AccY, AccZ readings (you can temporarily add print statements)
+3. Look for AccX, AccY, AccZ readings 
 4. Note the values. When flat: AccX and AccY should be near 0, AccZ near 1.0
-5. If AccZ reads 1.18 instead of 1.0, your correction is: `AccZ = raw/4096 - 0.18`
+5. If AccX, AccY and AccZ are found -0.03, -0.02 and 0.82 instead of 0, 0 and 1 respectively.Then you have to calculate your found value - ideal value( -0.03-0 = -0.03, -0.02-0=-0.02 , 0.82-1= -0.18). your correction is: `AccX = (float)AccXLSB / 4096 - your calculated value (  (float)AccXLSB / 4096 + 0.03 ), similarily AccY = (float)AccXLSB / 4096 + 0.02 , AccZ = (float)AccXLSB / 4096 + 0.18.
 6. Update these 3 lines in `gyro_signals_angle()` inside the main code:
 
 ```cpp
