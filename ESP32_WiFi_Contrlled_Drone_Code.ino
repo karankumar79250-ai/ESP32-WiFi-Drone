@@ -33,7 +33,7 @@ WebServer server(80);
 Servo motor1, motor2, motor3, motor4;
 
 // ============================================================
-// MPU6050 Variables (Projects 4, 5, 14, 15)
+// MPU6050 Variables 
 // ============================================================
 float RatePitch, RateRoll, RateYaw;
 float RateCalibrationPitch, RateCalibrationRoll, RateCalibrationYaw;
@@ -58,7 +58,7 @@ float PrevErrorRateRoll,  PrevErrorRatePitch,  PrevErrorRateYaw;
 float PrevItermRateRoll,  PrevItermRatePitch,  PrevItermRateYaw;
 float PIDReturn[] = {0, 0, 0};
 
-// Rate PID Gains (Project 12 — same as original)
+// Rate PID Gains 
 float PRateRoll  = 0.6;  float PRatePitch = PRateRoll;   float PRateYaw  = 2;
 float IRateRoll  = 0;  float IRatePitch = IRateRoll;   float IRateYaw  = 0;
 float DRateRoll  = 0; float DRatePitch = DRateRoll;   float DRateYaw  = 0;
@@ -71,7 +71,7 @@ float ErrorAngleRoll,    ErrorAnglePitch;
 float PrevErrorAngleRoll,  PrevErrorAnglePitch;
 float PrevItermAngleRoll,  PrevItermAnglePitch;
 
-// Angle PID Gains (Project 16 — same as original)
+// Angle PID Gains 
 float PAngleRoll = 2; float PAnglePitch = PAngleRoll;
 float IAngleRoll = 0; float IAnglePitch = IAngleRoll;
 float DAngleRoll = 0; float DAnglePitch = DAngleRoll;
@@ -105,15 +105,12 @@ volatile int FlightMode = 0;
 volatile bool Armed = false;
 
 // ============================================================
-// MUTEX — Race Condition Fix
-// Core 0 (WiFi) aur Core 1 (Gyro/PID) dono ReceiverValue[]
-// aur shared variables ko ek saath access karte the — ab nahi karenge
 // ============================================================
 SemaphoreHandle_t dataMutex;
 
 // ============================================================
 // FUNCTION: gyro_signals() — Acro Mode
-// Source: Project 13 (gyroscope only, no accelerometer)
+// gyroscope only, no accelerometer
 // MPU6050 SCL=22, SDA=21 (set in Wire.begin())
 // ============================================================
 void gyro_signals_acro(void) {
@@ -139,7 +136,6 @@ void gyro_signals_acro(void) {
 
 // ============================================================
 // FUNCTION: gyro_signals() — Angle Mode
-// Source: Project 16 (gyroscope + accelerometer)
 // Accelerometer sensitivity ±8g, Gyro ±500 deg/s
 // ============================================================
 void gyro_signals_angle(void) {
@@ -177,7 +173,7 @@ void gyro_signals_angle(void) {
   RatePitch = (float)GyroY / 65.5;
   RateYaw   = (float)GyroZ / 65.5;
 
-  // Accelerometer calibration offsets (Project 16 same values)
+  // Accelerometer calibration offsets
   AccX = (float)AccXLSB / 4096 + 0.03;
   AccY = (float)AccYLSB / 4096 + 0.02;
   AccZ = (float)AccZLSB / 4096 + 0.18;
@@ -188,7 +184,6 @@ void gyro_signals_angle(void) {
 
 // ============================================================
 // FUNCTION: kalman_1d()
-// Source: Project 15 (same as original, not changed)
 // ============================================================
 void kalman_1d(float KalmanState, float KalmanUncertainty,
                float KalmanInput, float KalmanMeasurement) {
@@ -203,7 +198,6 @@ void kalman_1d(float KalmanState, float KalmanUncertainty,
 
 // ============================================================
 // FUNCTION: pid_equation()
-// Source: Projects 12 & 16 (same logic as original, not changed)
 // ============================================================
 void pid_equation(float Error, float P, float I, float D,
                   float PrevError, float PrevIterm) {
@@ -222,7 +216,6 @@ void pid_equation(float Error, float P, float I, float D,
 
 // ============================================================
 // FUNCTION: reset_pid()
-// Source: Projects 12 & 16 (same as original)
 // ============================================================
 void reset_pid(void) {
   PrevErrorRateRoll  = 0; PrevErrorRatePitch  = 0; PrevErrorRateYaw  = 0;
@@ -1148,10 +1141,10 @@ void handleRoot() {
   server.send_P(200, "text/html", HTML_PAGE);
 }
 
-// PID Tuning endpoint — browser se PID values receive karta hai
-// aur current values wapas bhejta hai JSON mein
+// PID Tuning endpoint —  PID values receive from browsrer
+// and current values sent back in JSON 
 void handlePid() {
-  // Rate PID update (agar browser ne bheja to)
+  // Rate PID update (if browser sent)
   if (server.hasArg("prr")) { PRateRoll   = server.arg("prr").toFloat(); PRatePitch = PRateRoll; }
   if (server.hasArg("pry")) { PRateYaw    = server.arg("pry").toFloat(); }
   if (server.hasArg("irr")) { IRateRoll   = server.arg("irr").toFloat(); IRatePitch = IRateRoll; }
@@ -1187,7 +1180,7 @@ void handlePid() {
 }
 
 void handleCmd() {
-  // FIX: mutex lो — Core 1 (loop) is waqt ReceiverValue[] nahi padhega
+ 
   xSemaphoreTake(dataMutex, portMAX_DELAY);
   // Parse parameters sent from browser
   if (server.hasArg("r"))    ReceiverValue[0] = server.arg("r").toFloat();   // Roll
@@ -1197,7 +1190,7 @@ void handleCmd() {
   if (server.hasArg("arm"))  Armed            = (server.arg("arm") == "1");
   if (server.hasArg("mode")) FlightMode       = server.arg("mode").toInt();
   xSemaphoreGive(dataMutex);
-  // FIX: mutex do — ab Core 1 padh sakta hai
+  
 
   // Return current gyro data as JSON
   String json = "{";
@@ -1211,10 +1204,7 @@ void handleCmd() {
 }
 
 // ============================================================
-// WiFi TASK — Core 0 pe chalta hai (Gyro/PID se alag)
-// FIX: server.handleClient() loop() se hataya — ab yeh
-//      alag core pe chalta hai taaki gyro read block na ho
-// ============================================================
+
 void wifiTask(void *pvParameters) {
   for (;;) {
     server.handleClient();
@@ -1228,7 +1218,7 @@ void wifiTask(void *pvParameters) {
 void setup() {
   Serial.begin(115200);
 
-  // FIX: Mutex banao — Race Condition rokne ke liye
+ 
   dataMutex = xSemaphoreCreateMutex();
 
   // ----- I2C: MPU6050 (SCL=22, SDA=21) -----
@@ -1258,7 +1248,7 @@ void setup() {
 
   // ----- ESC / Motors (ESP32Servo) -----
   // Motor pins: M1=25, M2=14, M3=27, M4=26
-  motor1.setPeriodHertz(250);   // 250 Hz same as original
+  motor1.setPeriodHertz(250);   // 250 Hz 
   motor2.setPeriodHertz(250);
   motor3.setPeriodHertz(250);
   motor4.setPeriodHertz(250);
@@ -1283,9 +1273,7 @@ void setup() {
   server.begin();
   Serial.println("Web server started.");
 
-  // FIX: WiFi task Core 0 pe start karo
-  //      loop() mein handleClient() nahi chalega ab
-  //      Gyro + PID Core 1 pe chalega — dono alag alag
+ 
   xTaskCreatePinnedToCore(
     wifiTask,       // function
     "WiFiTask",     // naam
@@ -1304,8 +1292,7 @@ void setup() {
 // MAIN LOOP (250 Hz target)
 // ============================================================
 void loop() {
-  // FIX: server.handleClient() yahan se hataya — WiFiTask (Core 0) handle karta hai
-
+  
   // ---- Read Gyro & Subtract Calibration ----
   if (FlightMode == 0) {
     gyro_signals_acro();
@@ -1325,7 +1312,7 @@ void loop() {
     return;
   }
 
-  // FIX: mutex lo — WiFi task is waqt ReceiverValue[] nahi likhega
+  
   xSemaphoreTake(dataMutex, portMAX_DELAY);
   float localRoll     = ReceiverValue[0];
   float localPitch    = ReceiverValue[1];
@@ -1334,12 +1321,12 @@ void loop() {
   bool  localArmed    = Armed;
   int   localMode     = FlightMode;
   xSemaphoreGive(dataMutex);
-  // FIX: mutex diya — ab safe local copies use hongi
+  
 
   InputThrottle = localThrottle;
 
   // ============================================================
-  // ACRO MODE (Rate Mode) — Project 13 logic, unchanged
+  // ACRO MODE (Rate Mode)
   // ============================================================
   if (localMode == 0) {
 
@@ -1371,7 +1358,7 @@ void loop() {
 
   }
   // ============================================================
-  // ANGLE MODE (Stabilize Mode) — Project 16 logic, unchanged
+  // ANGLE MODE (Stabilize Mode) 
   // ============================================================
   else {
 
@@ -1430,10 +1417,10 @@ void loop() {
     PrevItermRateYaw  = PIDReturn[2];
   }
 
-  // ---- Throttle Limit (same as original: max 1800) ----
+  // ---- Throttle Limit ( max 1800) ----
   if (InputThrottle > 1800) InputThrottle = 1800;
 
-  // ---- Motor Mix (Project 11 — same equations, same 1.024 factor) ----
+  // ---- Motor Mix
   MotorInput1 = 1.024 * (InputThrottle - InputRoll - InputPitch - InputYaw);
   MotorInput2 = 1.024 * (InputThrottle - InputRoll + InputPitch + InputYaw);
   MotorInput3 = 1.024 * (InputThrottle + InputRoll + InputPitch - InputYaw);
@@ -1465,7 +1452,7 @@ void loop() {
   // ---- Write to Motors ----
   write_motors(MotorInput1, MotorInput2, MotorInput3, MotorInput4);
   // ===== DEBUG: Serial Monitor Motor Speeds =====
-  // Tuning khatam hone par in lines ko // se comment kar dena
+  // After tunning end comment these lines by //
   static uint8_t dbgCount = 0;
   if (++dbgCount >= 25) {          // 250Hz / 25 = 10 baar per second
     dbgCount = 0;
