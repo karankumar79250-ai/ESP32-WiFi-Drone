@@ -145,7 +145,7 @@ ESC calibration teaches each ESC the throttle range (1000µs = min, 2000µs = ma
 1. Open `tools/ESC_Calibration.ino` in Arduino IDE
 2. Upload it to your ESP32 (do NOT connect battery yet)
 3. Open **Serial Monitor** at `115200 baud`
-4. Read the instructions on screen — connect battery when told
+4. Read the instructions on screen — connect battery when told( you can also connect the battery from begining)
 5. The program will automatically send HIGH signal, wait, then LOW signal
 6. You will hear ESC beep sequences confirming calibration
 7. After calibration completes, the LED blinks slowly (success)
@@ -164,7 +164,7 @@ Step 3 → Runs motors at 20% throttle (1200µs) for 3 seconds
          Verifies all 4 motors respond equally.
          (No propellers! This is just a test.)
 
-Done  → LED blinks slowly. Upload the main drone code now.
+Done  → LED blinks slowly. 
 ```
 
 > If one motor spins slower than others after calibration, run the sketch again.
@@ -278,6 +278,7 @@ Angle PID — Roll / Pitch:  P = 2.0    I = 0.0    D = 0.0
 | Feels sluggish in Angle Mode | Raise Angle P value |
 
 **Recommended order:** Tune Rate P first → then Rate D → then Rate I → finally Angle P
+                    ** If any motor run faster than other and starts heating , then make all I value 0.
 
 ---
 
@@ -403,7 +404,11 @@ MIT License — free to use, modify, and share with attribution.
 
 ## 👤 Author
 
-**Karan Kumar**
+**Karan Kumar** — Firmware & Flight Controller
+
+**Rakesh Chaurasiya** — Hardware & Assembly
+
+**Ankit Kumar** — Testing & Documentation
 
 If this project helped you build your drone, please give it a ⭐ **Star** on GitHub!
 
