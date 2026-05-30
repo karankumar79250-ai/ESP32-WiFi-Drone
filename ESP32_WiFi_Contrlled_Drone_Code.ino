@@ -1232,7 +1232,6 @@ void setup() {
   Wire.endTransmission();
 
   // ----- Gyro Calibration (auto on power-on, 2000 samples) -----
-  // Same logic as original Projects 5 & 16 — no change
   Serial.println("Calibrating gyro...");
   for (RateCalibrationNumber = 0; RateCalibrationNumber < 2000; RateCalibrationNumber++) {
     gyro_signals_acro();   // Use acro signals for calibration (gyro only)
