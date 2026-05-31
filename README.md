@@ -404,9 +404,9 @@ MIT License — free to use, modify, and share with attribution.
 
 ## 👤 Author
 
-**Karan Kumar** — Firmware & Flight Controller
+**Karan Kumar** — Firmware & Flight Controller, Hardware, testing
 
-**Rakesh Chaurasiya** — Hardware & Assembly
+**Rakesh Chaurasia** — Hardware, Firmware & Flight Controller-40%, Testing
 
 **Ankit Kumar** — Testing & Documentation
 
