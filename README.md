@@ -26,11 +26,11 @@
 ```
 ESP32-WiFi-Drone/
 │
-├── firmware/
-│   └── ESP32_WiFi_Controlled_Drone_Code.ino   ← Main flight controller
+├── ESP32_WiFi_Controlled_Drone_Code.ino   ← Main flight controller
 │
-├── tools/
-│   └── ESC_Calibration.ino                    ← Run this ONCE before first flight
+├── ESC_Calibration.ino                   ← Run this ONCE before first flight
+│
+├── Accelerometer_Calibration.ino         ← Run this for finding AccX, AccY and AccZ for your MPU6050
 │
 └── README.md
 ```
